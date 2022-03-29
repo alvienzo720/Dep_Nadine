@@ -1,0 +1,13 @@
+<!-- Bill In Progress Form -->
+<form id="#toggle_in_progress_{{ bill.id}}"
+      method="POST"
+      style="display:inline-block;"
+      action="{% url 'staff:billing:bill_delay' bill.id %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}" >
+  {% if bill.in_progress %}
+    <input type="Submit" value="Clear In Progress"/>
+  {% else %}
+    <input type="Submit" value="Mark In Progress"/>
+  {% endif %}
+</form>

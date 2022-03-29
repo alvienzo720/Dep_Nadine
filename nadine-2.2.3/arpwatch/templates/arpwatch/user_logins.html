@@ -1,0 +1,32 @@
+{% extends "arpwatch/base.html" %}
+
+{% block content %}
+<div>
+	<div id='logs-length'><strong>{{ logs|length }} Logins</strong></div>
+	<h4>User Logins - {{ day|date:"M d, Y" }}</h4>
+</div>
+
+<h5 align="center">
+	<a href="{% url 'arp:user_logs' previous_day.year previous_day.month previous_day.day %}">&laquo; Prev</a>
+	[ <a href="{% url 'arp:user' %}">Today</a> ]
+	<a href="{% url 'arp:user_logs' next_day.year next_day.month next_day.day %}">Next &raquo;</a>
+</h5>
+
+<table border=1>
+	<tr>
+		<th>Time</th>
+		<th>User</th>
+		<th>IP Address</th>
+		<th></th>
+	</tr>
+	{% for l in logs %}
+		<tr>
+			<td>{{ l.logintime|date:"h:i a" }}</td>
+			<td>{{ l.user.profile }}</td>
+			<td>{{ l.ip_address }}</td>
+			<td></td>
+		</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

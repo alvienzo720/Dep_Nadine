@@ -1,0 +1,37 @@
+{% extends "arpwatch/base.html" %}
+
+{% block content %}
+
+<h3>Device Info</h3>
+<table>
+	<tr>
+		<th>User</th>
+		<td>{{ device.user }}</td>
+	</tr>
+	<tr>
+		<th>Device Name</th>
+		<td>{{ device.device_name }}</td>
+	</tr>
+	<tr>
+		<th>MAC Address</th>
+		<td>{{ device.mac_address }}</td>
+	</tr>
+</table>
+
+<h3>Logs</h3>
+<table>
+	<tr>
+		<th>Date</th>
+		<th>IP Address</th>
+		<th/>
+	</tr>
+	{% for log in logs %}
+		<tr>
+			<td><a href="{% url 'arp:device_logs' log.day|date:'Y' log.day|date:'m' log.day|date:'d' %}">{{ log.day|date:"M d, Y" }}</a></td>
+			<td>{{ log.ip }}</td>
+			<td/>
+		</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

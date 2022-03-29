@@ -1,0 +1,66 @@
+{% load static %}
+<html>
+
+<head>
+	<style>
+		body {
+			margin-top: -50px;
+			margin-left: -100px;
+			margin-right: -100px;
+			margin-bottom: -50px;
+		}
+		.page img {
+			width:8.5in;
+		}
+		.signature_box table {
+			margin-left: 120px;
+			width: 500px;
+		}
+		.signature_box th {
+			width: 100px;
+			vertical-align: bottom;
+			font-size: 50%;
+		}
+
+		.signature_box td {
+			border-bottom: 1px solid #ccc;
+			padding-top: 5px;
+			width: 400px;
+			vertical-align: bottom;
+			font-size: 50%;
+		}
+		.signature_box img{
+			width: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="page" id="page1_content">
+		<img src="/media/documents/{{doc_type}}1.png"/>
+	</div>
+	<pdf:nextpage>
+	<div class="page" id="page2_content">
+		<img src="/media/documents/{{doc_type}}2.png"/>
+		<div class="signature_box">
+			<table>
+				<tr>
+					<th></th>
+					<th>Name:</th>
+					<td>{{ name }}</td>
+				</tr>
+				<tr>
+					<th></th>
+					<th>Date:</th>
+					<td>{{ date }}</td>
+				</tr>
+				<tr>
+					<th></th>
+					<th>Signature:</th>
+					<td><img src="/media/signatures/{{ signature_file }}"/></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

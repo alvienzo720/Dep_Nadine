@@ -1,0 +1,72 @@
+{% load list_tags %}
+
+<table width="65%">
+<tr>
+    <td>
+      <div class='detail-billing'>
+        <strong>Current Profile:</strong>
+        {% if user.profile.has_valid_billing %}
+        	<font class='valid'>Valid</font>
+        	{% if user.profile.is_guest %}
+        		- Guest of: {{ user.profile.is_guest }}
+        	{% endif %}
+        {% else %}
+        	<font class='invalid'>Invalid</font>
+        {% endif %}
+      </div>
+      {% include "staff/billing/action_create_billing.html" %}
+    </td>
+    <td>
+        <div style="margin-bottom: .5em; text-align:left;">
+            Automatic Billing: <span id="auto_billing" style="color:green;">The {{ user.membership.bill_day_str }}</span>
+        </div>
+        <form id="disable_billing_form" action="{% url 'member:profile:disable_billing' user.username %}">
+            <input class='billing-btn btn' id="disable_billing_button" type="submit" value="Disable Automatic Billing" />
+        </form>
+    </td>
+</tr>
+<tr><td colspan="2">
+    If you have any questions, or need to make any changes to your membership, please email
+    <a target="_self" href="mailto:billing@officenomads.com" style="color:green;">billing@officenomads.com</a>.
+    We need at least one full business day to make any changes, otherwise your payment will be processed automatically.
+</td></tr>
+</table>
+
+{% if not user.profile.auto_bill_enabled %}
+    <script>
+        ab = document.getElementById("auto_billing");
+        ab.innerHTML = "Disabled";
+        ab.style.color = "red";
+        document.getElementById("disable_billing_button").disabled = true;
+    </script>
+{% endif %}
+
+<h3>Recent Bills</h3>
+
+<div id="bill-details">
+{% if bills %}
+<table>
+  <thead>
+        <tr>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Payments</th>
+            <th>Status</th>
+            <th></td>
+        </tr>
+  </thead>
+  <tbody>
+{% for bill in bills %}
+    <tr class="{% cycle 'row-even' 'row-odd' %}">
+        <td nowrap>{{ bill.due_date|date:"M d, Y" }}</td>
+        <td>${{ bill.total }}</td>
+        <td>${{ bill.total_paid }}</td>
+        <td>{% if bill.is_open %}Open{% endif %}</td>
+        <td><a href='{{ bill.get_absolute_url}}'>Receipt</a></td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+    No bills...
+{% endif %}

@@ -1,0 +1,87 @@
+{% extends "staff/settings/base.html" %}
+
+{% block sub-title %} Edit Rooms {% endblock %}
+
+{% block content %}
+{% for e in form.errors %}
+  {{ e }}
+{% endfor %}
+<h4>Add and Edit Meeting Rooms</h4>
+<form class='room-edit' action='.' method='POST' enctype="multipart/form-data">
+  <table>
+    <tr>
+      <td><strong>Room Name:</strong></td>
+      <td id='name-td'> {{ form.name }} </td>
+      <td><strong>Floor:</strong></td>
+      <td class='small-td'>{{ form.floor }}</td>
+      <td><strong>Seats:</strong></td>
+      <td class='small-td'>{{ form.seats }}</td>
+      {{ form.room_id }}
+    </tr>
+    <tr>
+      <td><strong>Room Description:</strong></td>
+      <td>{{ form.description}}</td>
+      <td><strong>Max Capacity:</strong></td>
+      <td class='small-td'>{{ form.max_capacity }}</td>
+      <td><strong>Default Rate:</strong></td>
+      <td>{{ form.default_rate }}</td>
+    </tr>
+    <tr>
+      <td><strong>Specific Location:</strong></td>
+      <td>{{ form.location }}</td>
+      <td></td>
+      <td style=''>{{ form.has_av }} <label for='id_has_av'>A/V</label></td>
+      <td></td>
+      <td>{{ form.has_phone }}<label for='id_has_phone'>Phone</label></td>
+    </tr>
+    <tr>
+      <td><strong>Upload Room Image:</strong></td>
+      <td>{{ form.image }}</td>
+      <td></td>
+      <td>{{ form.members_only }}<label for='id_members_only'>Members Only</label></td>
+      <td></td>
+    </tr>
+  </table>
+  {% csrf_token %}
+  {% if room %}
+    <button class='btn create-btn' type='submit'>Edit</button>
+  {% else %}
+    <button class='btn create-btn' type='submit'>Create</button>
+  {% endif %}
+</form>
+
+<h5>Existing Rooms</h5>
+<table class='room-table'>
+  <tr>
+    <tr>
+      <th class='sub-th'>Room Name</th>
+      <th class='sub-th'>Floor</th>
+      <th class='sub-th'>Seats</th>
+      <th class='sub-th'>Max Capacity</th>
+      <th class='sub-th'>Has A/V</th>
+      <th class='sub-th'>Has Phone</th>
+      <th class='sub-th'>Default Rate</th>
+      <th class='sub-th'></th>
+      <th class='sub-th'></th>
+    </tr>
+  </tr>
+  {% for r in rooms %}
+    <tr class='{% cycle "row-even" "row-odd" %}'>
+      <td style='text-align: center;'>{{ r.name }}</td>
+      <td>{{ r.floor }}</td>
+      <td>{{ r.seats }}</td>
+      <td>{{ r.max_capacity }}</td>
+      <td>{{ r.has_av|yesno:"Yes,No" }}</td>
+      <td>{{ r.has_phone|yesno:"Yes,No"  }}</td>
+      <td style='text-align: center;'>{{ r.default_rate }}</td>
+      <td>{% if r.members_only %}Members Only {% endif %}</td>
+      <form action='.' method='GET'>
+        <input type='hidden' name='room' value='{{ r.id }}' />
+        <td><button type='submit'>Edit</button></td>
+        {% csrf_token %}
+      </form>
+    </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

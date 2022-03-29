@@ -1,0 +1,20 @@
+{% extends "comlink/base.html" %}
+
+{% block sub-title %} | Home {% endblock %}
+
+{% block content %}
+
+<h2>Inboxes</h2>
+<table>
+  <tr>
+    <th>Address</th>
+    <th>Messages</th>
+  </tr>
+{% for i in inboxes %}
+    <tr>
+      <td><a href="{% url 'comlink:inbox' i.address %}">{{ i.address }}</a></td>
+      <td style="text-align:center;">{{ i.messages }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

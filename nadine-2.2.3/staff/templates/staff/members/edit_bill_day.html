@@ -1,0 +1,76 @@
+{% extends 'staff/members/base.html' %}
+
+{% block sub-title %}Edit Bill Day {% endblock %}
+
+
+{% block content %}
+<h4 id='membership-h4'>Edit Bill Day for <a href="{% url 'staff:members:detail' user.username %}">{{ user.get_full_name }}</a></h4>
+
+{% if open_bill %}
+  <p style='margin: 4%; font-size: 1.4em; color:RGBA(156, 88, 87, 1.00);'>
+    <strong>There is an open bill for this member with an end date of {{ open_bill.period_end }}. If you edit the bill day then you may have to adjust the bill amounts so this member is not double charged for any time period.</strong>
+  </p>
+  <a href="{% url 'staff:billing:bill' open_bill.id %}" class='btn' style='margin-left: 35%;'>Go To Open Bill</a>
+{% endif %}
+
+<form action='.' method='POST' onSubmit="return confirm('Are you sure you want to change this bill day?')">
+  <table class='bill-day-table'>
+    <tr>
+      <td class='bill-day-th'>
+        <strong>Current Bill Day:</strong>
+      </td>
+      <td class='bill-day-td'>
+        {{ user.membership.bill_day_str }} of each month
+      </td>
+    </tr>
+    <tr>
+      <td class='bill-day-th'>
+        <strong>Select Next Bill Day:</strong>
+      </td>
+      <td class='bill-day-td'>
+        <input name='bill-date' class='datepicker' placeholder="Select Date" />
+      </td>
+    </tr>
+  </table>
+  {% csrf_token %}
+  <input class='btn' type='submit' style='display:inline-block; margin-right: 5%; margin-left:40%;' /><span class='cancel'>Cancel</span>
+</form>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  $(document).ready(function() {
+    function daysInMonth(today) {
+      var month = today.getMonth() + 1;
+      var year = today.getFullYear();
+      return new Date(year, month, 0).getDate();
+    }
+
+    $('.button-collapse').sideNav();
+    $('.collapsible').collapsible();
+
+    function getMinDate() {
+      var period_end = '{{ period_end }}';
+      var today = new Date()
+      var this_date = today.getDate();
+      var day_difference = daysInMonth(today);
+      var num_days = period_end - this_date;
+
+      return (num_days);
+    }
+
+    var min_date = getMinDate()
+
+    $('.datepicker').datepicker({
+      dateFormat: 'yy-mm-dd',
+      minDate: min_date + 1,
+      maxDate: (min_date * 2) + (30 - min_date) + 1
+    });
+
+    $('.cancel').on('click', function(e) {
+      e.preventDefault();
+      window.location.replace("{% url 'staff:members:detail' user.username %}" + '#tabs1');
+    })
+  });
+</script>
+{% endblock %}

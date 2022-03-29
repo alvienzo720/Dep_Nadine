@@ -1,0 +1,54 @@
+{% extends "member/base.html" %}
+
+{% block sub-title %}Contact Request | {% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+<h2>Connect with {{ target.first_name}}!</h2>
+
+<p style="margin:2em;">
+There are two ways you can use Nadine to connect with other members.  We don't give out any personal information
+so we can't just give you their email address, but we can alert you when you are both in the space at the same time,
+or we can send an email to them with your information (<i>{{user.email}}</i>) and they can contact you.</p>
+
+<div class='centered'>
+	<h3>What would you like to do?</h3>
+	<dl>
+		<dd><a href="{% url 'member:connect:add_notification' target %}">Notify me when we are both in the space</a></dd>
+		{% if messages %}
+			<dd>Message Sent!</dd>
+		{% else %}
+			<dd><a href="?action=send_info">Send them my contact information</a></dd>
+		{% endif %}
+		<dd><a href="{% url 'member:profile:view' target %}">Go back to their profile</a></dd>
+	</dl>
+</div>
+
+{% endblock %}
+
+{% block extrajs %}
+<script>
+	$(document).ready(function() {
+		$('.button-collapse').sideNav();
+		$('div .success').hide();
+		$('footer').removeClass('main-footer');
+		$('footer').addClass('sticky-footer');
+
+		{% for message in messages %}
+			{% if message.tags == 'error' %}
+				Materialize.toast('{{ message }}', 60000, 'error-msg msg');
+			{% else %}
+				Materialize.toast('{{ message }}', 3000, '{{ message.tags }}-msg msg');
+			{% endif %}
+		{% endfor %}
+
+		$(document).on('click', '#toast-container .toast', function() {
+			$(this).fadeOut(function(){
+				$(this).remove();
+			});
+		});
+	});
+</script>
+{% endblock %}

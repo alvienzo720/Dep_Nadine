@@ -1,0 +1,79 @@
+{% extends "staff/billing/base.html" %}
+
+{% block sub-title %}Bill List{% endblock %}
+
+{% block content %}
+
+<h4>Find a Bill</h4>
+
+
+<table style="margin-top: 1em;">
+<form method="POST" action="{% url 'staff:billing:bill_redirect' %}">
+  <tr>
+    <td style="width:15%;">
+      <h5>Go to Bill:</h5>
+    </td>
+    <td style="width:10%;">
+      <input size="1" name="bill_id" placeholder="Bill ID"/>
+    </td>
+    <td style="width:10%;">
+      <!-- <input type="submit"> -->
+    </td>
+    <td></td>
+  </tr>
+  {% csrf_token %}
+</form>
+</table>
+
+<h5>Recent bills</h5>
+<div class="columns clearfix date-range">
+  {% include "staff/date_range_form.html"%}
+</div>
+
+{% if bills %}
+  <table>
+    <tr class='row-even'>
+      <th class='sub-th'>ID</th>
+      <th class='sub-th'>Created</th>
+      <th class='sub-th'>Member</th>
+      <th class='sub-th'>Period Start</th>
+      <th class='sub-th'>Period End</th>
+      <th class='sub-th'>Closed</th>
+      <th class='sub-th'>Lines</th>
+      <th class=" sub-th amount">Amount</th>
+      <th class="sub-th amount">Paid</th>
+      <th class="sub-th"></th>
+    </tr>
+
+    {% for bill in bills %}
+      <tr class="{% cycle 'row-odd' 'row-even' %}">
+        <td><a href="{% url 'staff:billing:bill' bill.id %}">{{ bill.id }}</a></td>
+        <td>{{ bill.created_ts|date:"m/d/y" }}</a></td>
+        <td><a href="{% url 'staff:members:detail' bill.user.username %}">{{ bill.user.get_full_name }}</a></td>
+        <td>{{ bill.period_start }}</td>
+        <td>{{ bill.period_end }}</td>
+        <td>{{ bill.closed_ts|default:'Open' }}</td>
+        <td>{{ bill.line_items.all | length }}</td>
+        <td class="amount">${{ bill.total }}</td>
+        <td class="amount">${{ bill.total_paid }}</td>
+        <td><a href="{{ bill.get_admin_url }}">admin</a></td>
+      </tr>
+    {% endfor %}
+{% else %}
+  <p>There are no bills for this period.</p>
+{% endif %}
+</table>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    $(document).ready(function() {
+      $('#id_start').addClass('datepicker');
+      $('#id_end').addClass('datepicker');
+      $('.datepicker').datepicker({
+        dateFormat: 'yy-mm-dd',
+      });
+    });
+  </script>
+{% endblock %}

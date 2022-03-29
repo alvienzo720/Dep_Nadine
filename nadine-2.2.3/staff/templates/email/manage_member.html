@@ -1,0 +1,88 @@
+{% load static %}
+
+{% if user.profile.photo %}
+	<img width="170" src="{{ site_url }}{{ user.profile.photo.url }}">
+{% else %}
+	<p>[ No photo for this user. ]</p>
+{% endif %}
+<h3 style='margin-top: 2%; margin-bottom: 2%; color: RGBA(79, 134, 135, 1.00);'>{{ user.get_full_name }}</h3>
+
+<p></p>
+
+{% if user.profile.open_alerts %}
+	<h4 style='margin-left: 2%;'>Action Needed</h4>
+	<table style="width:90%; margin-left: 5%; margin-right: 5%;">
+		{% for alert in user.profile.open_alerts %}
+			<tr>
+				<td style="border-bottom: 1px solid gray; text-align:left;" nowrap>{{ alert.description }}</td>
+				<td style="border-bottom: 1px solid gray; text-align:left;">
+					{% if alert.is_system_alert %}
+						[ SYSTEM ]
+					{% else %}
+						<form action="{{ site_url }}{% url 'member:manage' user.username %}" method="POST">
+							<input name="alert_id" value="{{ alert.id }}" type="hidden" />
+							<input name="username" value="{{ user.username }}" type="hidden" />
+							<button type="submit" name="resolve_task" type="submit">Resolve</button>
+						</form>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
+<h4 style='margin-left: 2%;'>Recent Activity</h4>
+<table style="width:90%; margin-left: 5%; margin-right: 5%;">
+	<tr>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;" nowrap>Date</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Payment</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Guest of</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Notes</th>
+	</tr>
+	{% for log in user.coworkingday_set.all|slice:":10" %}
+		<tr>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ log.visit_date|date:"M d, Y" }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ log.payment }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ log.paid_by|default:"&nbsp;" }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ log.note }}&nbsp;</td>
+		</tr>
+	{% empty %}
+		<tr><td colspan="4" style="border-bottom: 1px solid gray; text-align:left;"><i>There is no recorded activity for this user.</i></td></tr>
+	{% endfor %}
+</table>
+
+<h4 style='margin-left: 2%;'>Membership History</h4>
+<table style="width:90%; margin-left: 5%; margin-right: 5%;">
+	<tr>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Membership</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Start</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">End</th>
+	</tr>
+	{% for m in user.profile.membership_history %}
+		<tr>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ m.membership_plan }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ m.start_date }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ m.end_date }}&nbsp;</td>
+		</tr>
+	{% empty %}
+		<tr><td style="border-bottom: 1px solid gray; text-align:left;" colspan="4"><i>There is no membership history for this user.</i></td></tr>
+	{% endfor %}
+</table>
+
+<h4 style='margin-left: 2%;'>Files</h4>
+<table style="width:90%; margin-left: 5%; margin-right: 5%;">
+	<tr>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;" nowrap>Uploaded</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">File Name</th>
+		<th style="background-color: RGBA(76, 76, 76, 1.00); color: white; border-radius: 0px; text-align:left; font-weight: initial;">Uploaded By</th>
+	</tr>
+	{% for f in user.profile.file_uploads %}
+		<tr>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ f.uploadTS|date:"M d, Y" }}</td>
+			<td style="border-bottom: 1px solid gray; text-align:left;"><a href="{{ site_url }}{% get_media_prefix %}{{ f.file.name }}">{{ f.name }}</a></td>
+			<td style="border-bottom: 1px solid gray; text-align:left;">{{ f.uploaded_by }}</td>
+		</tr>
+	{% empty %}
+		<tr><td colspan="4" style="border-bottom: 1px solid gray; text-align:left;"><i>There are no files uploaded for this user.</i></td></tr>
+	{% endfor %}
+</table>

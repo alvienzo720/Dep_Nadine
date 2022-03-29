@@ -1,0 +1,10 @@
+{% extends "member/base.html" %}
+
+{% block content %}
+	<h3 class='header-font' style='text-align: center;'>{{ title }}</h3>
+	<div class='col s8 offset-s2'>
+		{% autoescape off %}
+			{{ page_body }}
+		{% endautoescape %}
+	</div>
+{% endblock %}

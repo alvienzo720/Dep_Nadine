@@ -1,0 +1,205 @@
+{% extends "staff/settings/base.html" %}
+
+{% block content %}
+  <h4>Create and Update Membership Packages</h4>
+  <form class='create-pkg-form' action='.' method='POST'>
+    <div class='pkg-table'>
+      {{ package_formset.management_form }}
+      {% for new_package_form in package_formset %}
+        <table style='width: 70%;'>
+          <tr>
+            <td style='width: 17%;'>
+              <strong>Package Name:</strong>
+            </td>
+            <td class='select-td'>
+              {{ new_package_form.name }}
+            </td>
+            <td style='padding-left: 5%;'>
+              <label for='enabled'>Enable?</label>
+              {{ new_package_form.enabled }}
+            </td>
+          </tr>
+        </table>
+        <table class='new_package'>
+          <tr class='package_formset'>
+            <td>
+              <strong>Resource:</strong>
+            </td>
+            <td>
+              {{ new_package_form.resource }}
+            </td>
+            <td>
+              <strong>Allowance:</strong>
+            </td>
+            <td style='width: 10%;'>
+              {{ new_package_form.allowance }}
+            </td>
+            <td>
+              <strong>Monthly Rate:</strong>
+            </td>
+            <td style='width: 10%;'>
+              {{ new_package_form.monthly_rate }}
+            </td>
+            <td >
+              <strong>Overage Rate:</strong>
+            </td>
+            <td id='overage-td' style='width: 10%;'>
+              {{ new_package_form.overage_rate}}
+            </td>
+            <td id='del-td'>
+            </td>
+          </tr>
+        </table>
+      {% endfor %}
+    </div>
+    <button class='btn create-btn' type='submit'>Create</button>
+    {% csrf_token %}
+  </form>
+  <div class='existing-pkgs'>
+  <h5>Existing Membership Packages</h5>
+  <table>
+    <tr>
+      <th>Package Name</th>
+      <th>Enabled</th>
+      <th>Resource</th>
+      <th>Allowance</th>
+      <th>Monthly Rate</th>
+      <th>Overage Rate</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for package in packages %}
+      <form action='.' method='GET'>
+        {% ifchanged package.package.name %}
+          <tr class='pkgInfo-{{ package.package.id }} pkg-row' >
+            <td style='width:15%;'>
+                <strong>{{ package.package.name }}</strong>
+            </td>
+            <td>{{ package.package.enabled|yesno:"Yes,No" }}</td>
+            <td>{{ package.resource }}</td>
+            <td class='rate'>{{ package.allowance }}</td>
+            <td class='rate'>{{ package.monthly_rate }}</td>
+            <td class='rate' style='text-align: center;'>{{ package.overage_rate }}</td>
+            <td></td>
+            <input type='hidden' name='package' value='{{ package.package.id }}' />
+            <td><button action='submit'>Edit</button></td>
+          </tr>
+        </form>
+        <form action='.' method='POST'>
+          {{ package_formset.management_form }}
+          {% for package_form in package_formset %}
+          <tr class='edit-pkg edit-{{ package.package.id }}'>
+            <td style='width:15%;'>
+              {% ifchanged package.package.name %}
+                {{ package_form.name }}
+              {% endifchanged %}
+              {{ package_form.sub_id }}
+              {{ package_form.package }}
+            </td>
+            <td>{% ifchanged package.package.name %}
+              {{ package_form.enabled }}
+              {% endifchanged %}
+            </td>
+            <td>
+              {{ package_form.resource }}
+            </td>
+            <td class='rate'>
+              {{ package_form.allowance }}
+            </td>
+            <td class='rate'>
+              {{ package_form.monthly_rate }}
+            </td>
+            <td class='rate'>
+              {{ package_form.overage_rate }}
+            </td>
+            <td>
+              {{ package_form.delete }}<p style='display: inline-block; margin-top: 5%; margin-left: 5%;'><strong> Delete</strong></p>
+            </td>
+            <td>
+              {% ifchanged package.package.name %}
+                <button type='submit'>Update</button>
+                <a class='cancel'>Cancel</a>
+              {% endifchanged %}
+            </td>
+            {% csrf_token %}
+          </tr>
+          {% endfor %}
+        </form>
+        {% else %}
+          <tr class="{% cycle 'row-even' 'row-odd' %} pkgInfo-{{ package.package.id }} pkg-row" style='border-top: none;'>
+            <td></td>
+            <td>{{ package.package.enabled|yesno:"Yes,No" }}</td>
+            <td>{{ package.resource }}</td>
+            <td>{{ package.allowance }}</td>
+            <td>{{ package.monthly_rate }}</td>
+            <td style='text-align: center;'>{{ package.overage_rate }}</td>
+            <td><input type='hidden' name='package' value='{{ package.package.id }}' /></td>
+            <td></td>
+          </tr>
+        {% endifchanged %}
+        {% csrf_token %}
+      </form>
+    {% empty %}
+      <tr>
+        <td colspan="5"><i>No Membership Packages</i></td>
+      </tr>
+    {% endfor %}
+      </table>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  $(document).ready(function() {
+    $('.button-collapse').sideNav();
+    $('.collapsible').collapsible();
+    $('.edit-pkg').hide();
+    $('.select-pkg').val('{{ package }}');
+    $('.pkg-table input').attr('required', 'required');
+    $('.pkg-table select').attr('required', 'required');
+
+    var id = '{{ package }}';
+    if(id != 'None') {
+      $('.edit-' + id).show();
+      $('.pkgInfo-' + id).hide();
+      $('.package-id').val(id)
+      $('.create-pkg-form').remove();
+      $('.name-input').attr('disabled', 'disabled');
+      $('.name-input').css('border-bottom', 'none');
+      $('.pkg-table input').attr('required', false);
+      $('.pkg-table select').attr('required', false);
+      $('html, body').animate({
+        scrollTop: $('.edit-' + id).offset().top
+      });
+      // $('.edit-' + id).css('border', '1px solid RGBA(176, 188, 196, 1.00)');
+    }
+
+    $('.package_formset').formset({
+      addText:'Add Another',
+      deleteText: 'Delete'
+    })
+
+    $('.delete-row').appendTo($('#del-td'));
+
+    $('.cancel').on('click', function(e) {
+      e.preventDefault();
+      window.location.replace("{% url 'staff:settings:membership_packages' %}");
+    })
+
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        Materialize.toast('{{ message }}', 60000, 'error-msg msg');
+      {% else %}
+        Materialize.toast('{{ message }}', 3000, '{{ message.tags }}-msg msg');
+      {% endif %}
+    {% endfor %}
+
+    $('#toast-container .toast').on('click', function(e) {
+      e.preventDefault();
+      $(this).fadeOut(function(){
+        $(this).remove();
+      });
+    });
+  });
+</script>
+{% endblock %}

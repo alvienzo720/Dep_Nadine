@@ -1,0 +1,50 @@
+{% extends "tablet/t_base.html" %}
+
+{% block nav-members %} class="ui-btn-active" {% endblock %}
+
+{% block content %}
+  <div style="font-size: 150%;">Welcome {{user.first_name}} {{user.last_name}}!</div>
+
+  <div style="font-weight:bold; padding:1em; font-size:200%">
+    {% if first_day %}
+      Today is your first day and we're so glad you're here!
+    {% else %}
+      As of today, you have used
+      <span style="color: {{ usage_color }}">
+        {{ billable }} {% if day_allowance %} of {{ day_allowance }} {% endif %}
+      </span>
+      days.
+      <div style="padding-top:1em; font-weight:normal;">Your billing day is the {{ bill_day_str }}.</div>
+    {% endif %}
+  </div>
+
+	<div style="width:100%; position:absolute; bottom:60px; text-align:center;">
+		<div id="page-coutdown" style="margin:0 auto; position:relative;">
+			<img src="{{ STATIC_URL }}images/b_dot_full.png" style="padding: 0 25px;"/>
+			<img src="{{ STATIC_URL }}images/b_dot_full.png" style="padding: 0 25px;"/>
+			<img src="{{ STATIC_URL }}images/b_dot_full.png" style="padding: 0 25px;"/>
+			<img src="{{ STATIC_URL }}images/b_dot_full.png" style="padding: 0 25px;"/>
+			<img src="{{ STATIC_URL }}images/b_dot_full.png" style="padding: 0 25px;"/>
+		</div>
+	</div>
+
+	<script>
+	jQuery(function( $ ){
+	var $img = $('#page-coutdown img');
+	var n = $img.length;
+
+	function changeDot(){
+	    $img.delay(1000).eq(--n).attr("src","{{ STATIC_URL }}images/b_dot_empty.png");
+	    if(n<=0){
+	        clearInterval(timer);
+	    }
+	};
+
+	var timer = setInterval(changeDot, 1000);
+	});
+	</script>
+	<script>
+		//will call the function after 5 secs
+		setTimeout(function () { window.location.href = "{% url 'tablet:motd' %}"; }, {{ motd.delay_ms }});
+	</script>
+{% endblock %}

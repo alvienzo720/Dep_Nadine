@@ -1,0 +1,145 @@
+/*Styling for the stats templates of the Nadine Staff App*/
+
+table th {
+  width: 100px;
+}
+
+#stats-tab {
+  color: RGBA(90, 122, 189, 1.00) !important;
+}
+
+#content table {
+  width: auto;
+  margin-bottom: 40px;
+}
+
+#content td {
+  border-bottom: none;
+  /*width: 50px;*/
+}
+
+#count-td {
+  text-align: center;
+}
+
+canvas#cvs {
+	width: 500px;
+	height: 400px;
+}
+
+#cvs {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+#input-form {
+  font-size:16px;
+  margin-left: 2em;
+  margin-bottom:2em;
+  vertical-align: middle;
+}
+
+#input-form input {
+  display: inline;
+}
+
+#input-start {
+  width: 20%;
+  padding-left: 2%;
+  padding-top: 2%;
+}
+
+#input-form label {
+  margin-left: 3%;
+}
+
+#input-submit {
+  margin-left: 2%;
+}
+
+#stats span {
+  font-size: 1.2em;
+  padding: 10px;
+}
+
+.c3-tooltip-container {
+  width: 200px;
+}
+
+.ended-bar {
+  padding: 0 1em;
+  background-color: #F99;
+}
+
+.member-table {
+  margin-bottom: 0 !important;
+}
+
+.monthly-stats {
+  width: 70%;
+}
+
+.monthly-stats td {
+  border-bottom: none;
+}
+
+.monthly-stats th, .monthly-stats td {
+  text-align: left;
+}
+
+.monthly-stat th {
+  font-weight: normal;
+  width: 100px;
+}
+
+.neighborhood-details {
+  margin: 8px;
+  display: none;
+}
+
+.neighborhood_table {
+  /*font-size: 16px;*/
+}
+
+.note-cell {
+  width: 160px;
+}
+
+.started-bar {
+  padding: 0 1em;
+  background-color: #9F9;
+}
+
+.sub-th {
+  background-color: RGBA(76, 76, 76, 1.00);
+	color: white;
+	border-radius: 0;
+}
+
+.titles {
+  margin: 10px 0;
+}
+
+.total-bar {
+  padding: 0 1em;
+  background-color: #99F;
+}
+
+.year-heading th {
+  padding: 1.5em 0;
+  font-size: 1.2em;
+}
+@media only screen and (max-width: 550px) {
+  canvas#cvs {
+		width: 400px;
+		height: 320px;
+		margin-left: 5%;
+	}
+}
+
+@media only screen and (max-width: 450px) {
+  canvas#cvs {
+		width: 300px;
+		height: 240px;
+	}
+}

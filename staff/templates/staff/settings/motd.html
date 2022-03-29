@@ -1,0 +1,142 @@
+{% extends "staff/settings/base.html" %}
+
+{% block content %}
+  <h4>Add or Update a Message of the Day</h4>
+  {% if message %}
+    <div class='error'>
+      {{ message }}
+    </div>
+  {% endif %}
+  <br />
+  <div class='previous-motds'>
+    <table>
+      <tr>
+        <td class='motd-update'>
+          <strong>To Update an Existing Message of the Day:</strong>
+        </td>
+        <td>
+          <form class='text-selection' method='GET' action='.'>
+            <select id='motd-input' name='selected_motd'>
+                <option value='Select One' selected disabled="True"> Select A Time Period Here</option>
+              {% for motd in prev_motd %}
+                <option value='{{ motd.id }}'>{{ motd.start_ts|date:'D M d, Y' }} - {{ motd.end_ts|date:'D M d, Y' }}</option>
+              {% endfor %}
+            </select>
+            <input style='display: inline-block;' class='btn motd-btn' type='submit' value='Start Updating' />
+          </form>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <table class='alt-message'>
+    <tr>
+      <td class='border-td'><hr /></td>
+      <td><strong id='new-message-td'>Or Enter New Message</strong></td>
+      <td class='border-td'><hr /></td>
+    </tr>
+  </table>
+  <form method='POST' action='.'>
+    <table>
+      <tr class='motd-date-row'>
+        <td class='motd-dates'>
+          <strong>Starting:</strong> {{ motd_form.start_ts }}
+          {% if selected %}{% else %}
+          <input id='single_day' type='checkbox' name='single_day' />
+          <label for='single_day'>Just One Day</label>
+          {% endif %}
+        </td>
+        <td class='motd-dates end-td'>
+          <strong>Ending:</strong> {{ motd_form.end_ts }}
+        </td>
+      </tr>
+    </table>
+    <div class='template-div'>
+      <input name='id' id='text-id' type='hidden' value='{{ selected.id }}' />
+      {% if selected %}
+        <textarea name='message' id='id_message' rows='20'>
+          {{ selected.message|safe }}
+        </textarea>
+      {% else %}
+        <textarea name='message' id='id_message' rows='20'>
+        </textarea>
+      {% endif %}
+    </div>
+    {{ motd_form.delay_ms }}
+    <br />
+    {% if selected %}
+      <input type='submit' class='btn' style='margin-left: 15%;' value='Update Message for {{ selected.start_ts|date:"m-d-Y" }} to {{ selected.end_ts|date:"m-d-Y" }}' />
+      <span id='cancel' class='help-btn'>Cancel</span>
+    {% else %}
+      <input type='submit' class='btn' value='Post New Message' style='margin-left: 25%;'/>
+      <span id='cancel' class='help-btn'>Cancel</span>
+    {% endif %}
+    {% csrf_token %}
+  </form>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    $(document).ready(function() {
+      $('.button-collapse').sideNav();
+      $('.collapsible').collapsible();
+      CKEDITOR.replace('id_message');
+      $('#id_start_ts').addClass('datepicker');
+      $('#id_end_ts').addClass('datepicker');
+      $('#id_start_ts').val(formatDate(new Date()));
+
+      $('#id_delay_ms').val('{{ delay }}');
+      $('#id_start_ts').attr('required', true);
+      $('#id_message').attr('required', true);
+
+      $('.datepicker').datepicker({
+        dateFormat: 'yy-mm-dd',
+        minDate: 0
+      })
+
+      $('#single_day').click(function() {
+        $('.end-td').toggle();
+        var date = new Date($('#id_start_ts').datepicker('getDate'));
+        date.setDate(date.getDate() + 1);
+        var final = formatDate(date);
+        $('#id_end_ts').val(final);
+      });
+
+      if('{{ selected.id }}') {
+        $('#motd-input').val("{{ selected.id }}");
+        $('#new-message-td').text('Update Text');
+        $('#id_start_ts').val("{{ selected.start_ts|date:'Y-m-d' }}");
+        $('#id_end_ts').val("{{ selected.end_ts|date:'Y-m-d' }}");
+        $('#id_messge').val('{{ selected.message }}');
+
+        //Disabling datepicker when updating a MOTD
+        $('#id_start_ts').attr('readonly', 'true');
+        $('#id_end_ts').attr('readonly', 'true')
+        $('#id_start_ts').removeClass('datepicker').removeClass('hasDatepicker');
+        $('#id_end_ts').removeClass('datepicker').removeClass('hasDatepicker');
+      } else {
+        $('#id_start_ts').addClass('datepicker');
+        $('#id_end_ts').addClass('datepicker');
+      }
+
+      $('#cancel').on('click', function(e) {
+        e.preventDefault();
+        window.location.replace("{% url 'staff:settings:motd' %}");
+      })
+
+      function formatDate(d) {
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + d.getDate();
+        var year = d.getFullYear();
+
+        if (month.length < 2) {
+          month = '0' + month;
+        }
+        if (day.length < 2) {
+          day = '0' + day;
+        }
+
+        return [year, month, day].join('-');
+      }
+    });
+  </script>
+{% endblock %}

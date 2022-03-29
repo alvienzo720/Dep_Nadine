@@ -1,0 +1,20 @@
+{% load integrated_systems %}
+{% load_integrations as integrations %}
+
+<li>
+  <a href="{% url 'staff:billing:bills' %}">Find a Bill</a>
+</li>
+<li>
+  <a href="{% url 'staff:billing:outstanding' %}">Outstanding Bills</a>
+</li>
+{% if integrations.usaepay %}
+<li>
+  <a href="{% url 'staff:billing:charges_today' %}">Daily Charges</a>
+</li>
+<li>
+  <a href="{% url 'staff:billing:payments_members' %}">Auto-Billing</a>
+</li>
+{% endif %}
+<li>
+  <a href="{% url 'staff:billing:batch_logs' %}">Batch Logs</a>
+</li>

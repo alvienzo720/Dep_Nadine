@@ -1,0 +1,112 @@
+#header { 
+	text-shadow: none;
+	background-color:#313131; 
+	font-size: 1.5em; 
+	color: #EEE;
+	padding-top:0px;
+}
+
+#footer {
+	padding-top: 0.5em; 
+	padding-bottom: 0.5em; 
+	background-color:#313131;
+	text-shadow: none;
+	color: #EEE;
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+}
+
+#top-nav ul li a { 
+	font-size: 1em;
+	border-top: 0px;
+}
+
+#new_user form div label { 
+	font-size: 1.1em;
+	vertical-align: top;
+}
+
+#yellow_button {
+	background-color: yellow; 
+	font-size: 1.2em;
+}
+
+#tiles div {
+	width:100%; 
+	text-align:center;
+}
+
+#tiles a {
+	text-decoration: none;
+	color: #FFF;
+}
+.tile {
+	-moz-border-radius:10px 10px 10px 10px;  // rounds corners for firefox
+	border-radius:10px 10px 10px 10px;  //rounds corners for other browsers
+	border:solid 1px #000;
+	display: inline-block;
+	width: 2em;
+	background-color: #38c;
+	border-color: #38c;
+	margin-left: 20px;
+	margin-bottom: 20px;
+	font-size: 3em;
+	text-align: center;
+	vertical-align: middle;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+#signin {
+	width: 100%;
+	margin-top: 3em;
+}
+
+#signin a {
+   font-size: 2em;
+   color: #EEE;
+   background-color: #009900;
+   border-color: #00cc00;
+   width: 75%;
+   margin: 0 auto;
+}
+
+table td:first-child, table td:last-child { text-align: left; }
+table td { vertical-align: top; text-align: left; border-bottom: 1px solid #ccc; padding: 0.5em; }
+
+.user-grid { text-align: center; }
+.user-card { float: left; width: 190px; border: solid 3px #FFF; margin: 10px; text-align: center; }
+.user-card a { padding: 10px 0; display: block; }
+.user-card a.photo { height: 170px; background-color: #EEE; font-size: 150px; color: #DDD; text-decoration: none; }
+
+.hidden {
+	display: none;
+}
+a.showLink, a.hideLink {
+	text-decoration: none;
+	color: #36f;
+	font-size: 1.2em;
+}
+a.hideLink {
+	display: none;
+}
+
+#guestform-links {
+}
+
+/* Override the JQuery Mobile stuff */
+#header.ui-header, #footer.ui-footer {
+	border: none;
+}
+.ui-content {
+	margin-bottom: 40px;
+}
+#member-search-form .ui-btn.ui-btn-b,
+#visitor-form .ui-btn.ui-btn-b{
+	background-color: #38c;
+	border-color: #38c;
+	font-size: 1.2em;
+	width: 75%;
+	margin: 1em auto;
+}

@@ -1,0 +1,356 @@
+/*Styling for the billing templates of the Nadine Staff App*/
+input.datepicker {
+  text-align: center;
+  max-width: 150px;
+  padding-left: 4%;
+}
+
+.amount {
+  text-align:right;
+}
+
+.authorized {
+  color: green;
+}
+
+.bill-details {
+  margin: 10px 40px 20px 40px;
+}
+
+.bill-detail-table td {
+  border: none;
+  text-align: inherit;
+  vertical-align: baseline;
+  padding: 0;
+}
+
+.bill-detail-table #bill-deets {
+  width: 30%;
+}
+
+.bill-detail-table #amount-td {
+  width: 20%;
+}
+
+.bill-detail-table #amount-td input {
+  width: 60%;
+  padding-left: 2%;
+  margin-bottom: 0;
+}
+
+.bill-detail-table td:last-child {
+  text-align: left !important;
+}
+
+.bill-detail-toggle {
+  text-decoration: none;
+}
+
+.bill-id-table th, .bill-id-table td {
+  text-align: left !important;
+}
+
+.bill-id-table th {
+  padding-left: 2%;
+  width: 12%;
+  font-size: 1.1em;
+}
+
+.bill-id-table {
+  margin: 2%;
+  width: 74% !important;
+}
+
+.bill-id-table tr {
+  padding-top: 2%;
+}
+
+.bill-info {
+  margin-left: 40px;
+}
+
+.bill-list-fees {
+  margin: 5px 10px;
+  width: 700px;
+}
+
+.bill-list-fees th {
+  width: 100px;
+  text-align: right;
+  font-style: italic;
+  background-color: #FFF;
+  font-weight: normal;
+}
+
+.bill-list-fees td, .bill-list-fees th {
+  border-bottom: 0px;
+}
+
+.bill-type h5, .bill-type p {
+  margin-left: 2%
+}
+
+.bill-type h5 {
+  margin-top: 2%;
+}
+
+.bill-username, .bill-deets #id_amount {
+  display: inline-block;
+}
+
+.bill_day {
+  width: 20% !important;
+}
+
+.billing-today-tb tbody th {
+  width: 20%;
+}
+
+.billing-today-tb {
+  width: 90% !important;
+  margin-left: 5%;
+}
+
+.bl-failure {
+  background-color: #F99;
+}
+
+.charges-table {
+  margin-top: 2%;
+}
+
+.cvv-title {
+  width: 5%;
+  vertical-align: middle;
+}
+
+.error {
+  text-align: center;
+  font-size: 150%;
+  color: red;
+}
+
+.input-title {
+  width: 25%;
+  vertical-align: middle;
+}
+
+.input-td {
+  width: 20%;
+}
+
+.item-table {
+  width: 75% !important;
+  margin: 2%;
+}
+
+.item-table th, .outstanding-table th {
+  background-color: RGBA(76, 76, 76, 1.00);
+  color: white;
+  border-radius: 0px;
+  font-size: 1.1em;
+}
+
+.item-table th, .item-table td {
+  text-align: left !important;
+}
+
+.open-bill {
+  color: red;
+}
+
+.other-table {
+  padding-bottom: 5%;
+}
+
+.other-table th {
+  vertical-align: baseline;
+}
+
+.outstanding-table {
+  margin: 2%;
+}
+
+.pay-bill-form input[type=text] {
+  width: 8em;
+}
+
+.payment-amount #id_amount {
+  width: 100%;
+  text-align: right;
+  margin-left: 10%;
+}
+
+.payment-table {
+  margin: 2%;
+}
+
+.payment-tr td {
+  vertical-align: middle;
+  font-size: 1.1em;
+}
+
+.quarter-td {
+  width: 25%;
+}
+
+.sub-th {
+  background-color: RGBA(76, 76, 76, 1.00);
+  color: white;
+  border-radius: 0px;
+}
+
+.transactions-sum span {
+  display: inline-block;
+}
+
+.useapay_create, #useapay2_create, .useapay3_create {
+  margin-left: 5%;
+}
+
+.useapay_create td, #useapay2_create td, .useapay3_create td {
+  border-bottom: none;
+  text-align: left !important;
+}
+
+.useapay_create input, .useapay3_create input {
+  width: 40%;
+}
+
+#bill-list h4 {
+  font-weight: normal;
+}
+
+#bill-list li {
+  margin-bottom: 20px;
+}
+
+#bill-list li span {
+  color: black;
+}
+
+#bill-row #set_paid {
+  margin-left: 0;
+}
+
+#bill-row {
+  margin-bottom: 0;
+}
+
+#billing-tab {
+  color: RGBA(90, 122, 189, 1.00) !important;
+}
+
+#billing-logs-table th:first-child, #billing-logs-table td:first-child { width: 40%; }
+
+#content table {
+  width: 100%;
+}
+
+#content table td:last-child {
+  text-align: center;
+}
+
+#exp_td {
+  width: 10% !important;
+}
+
+#exp_input {
+  width: 20%;
+}
+
+#id_amount {
+	width: 30%;
+	vertical-align: baseline;
+	padding-left: 3%;
+}
+
+#id_payment_date {
+  text-align: left;
+}
+
+#paid-th {
+  width: 7%;
+}
+
+#set_paid {
+	margin-left: 5%;
+}
+
+#useapay2_create input {
+  width: 20%;
+}
+
+#useapay2_create .input-title {
+  width: 10%;
+}
+
+#xero-link {
+  margin-left: 55%;
+}
+
+@media only screen and (max-width: 885px) {
+  #xero-link {
+    margin-left: 40%;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  #id_amount {
+    width: 20% !important;
+    vertical-align: baseline;
+    padding-left: 1%;
+  }
+
+  #xero-link {
+    margin-left: 30%;
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  #bill-row {
+		margin-bottom: 0;
+	}
+
+  #card-th, #note-th, #action-th {
+    margin-top: 4%;
+  }
+
+  #desc-th, #type-th, #amount-th, #charge-th {
+    margin-top: 8%;
+  }
+
+  #xero-link {
+    margin-left: 2%;
+  }
+
+  .other-table {
+    padding-bottom: 10%;
+  }
+
+  .outstanding-table a {
+    font-size: 11.2px;
+  }
+
+  .outstanding-table td, .outstanding-table th {
+    min-height: 25px !important;
+  }
+
+  .transactions-sum span {
+    display: block;
+    margin-left: 2%;
+  }
+
+}
+
+@media only screen and (max-width: 450px) {
+  div.bill-deets {
+		margin-left: 0;
+	}
+
+	#id_amount {
+		width: 25% !important;
+		vertical-align: baseline;
+		padding-left: 2%;
+	}
+}

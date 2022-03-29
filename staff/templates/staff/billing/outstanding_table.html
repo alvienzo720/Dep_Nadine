@@ -1,0 +1,70 @@
+{% load billing_tags %}
+{% load humanize %}
+{% load list_tags %}
+<table class='outstanding-table responsive-table'>
+  <tr>
+    <th>ID *</th>
+    <th>Period Start</th>
+    <!-- <th>Period End</th> -->
+    <th>User</th>
+    <th>Monthly</th>
+    <th>Overage</th>
+    <th>Total</th>
+    <th>Paid</th>
+    <th>Days</th>
+    <th>Action</th>
+  </tr>
+{% for bill in bills %}
+  <tr class="{% cycle 'row-odd' 'row-even' %}">
+    <td>
+      <a style="color:{% user_billing_color bill.user %};" href="{{ bill.get_staff_url }}">{{ bill.id }}</a>
+    </td>
+    <td nowrap>{{ bill.period_start }}</td>
+    <!-- <td nowrap>{{ bill.period_end }}</td> -->
+    <td>
+      <a href="{% url 'staff:members:detail' bill.user.username %}">{{ bill.user.get_full_name }}</a>
+    </td>
+    <td id='amount-td'>
+      {% if bill.monthly_rate %}${{ bill.monthly_rate }}{% endif %}
+    </td>
+    <td id='amount-td' style="color:red;">
+      {% if bill.overage_amount %}${{ bill.overage_amount }}{% endif %}
+    </td>
+    <td id='amount-td'><strong>${{ bill.total }}</strong></td>
+    <td id='amount-td'>
+      {% if bill.total_paid %}
+        ${{ bill.total_paid }}
+      {% endif %}
+    </td>
+    <td>
+      {{ bill.coworking_day_count }}
+      {% if bill.coworking_day_count != bill.coworking_day_billable_count %}
+        ({{ bill.coworking_day_billable_count}})
+      {% endif %}
+    </td>
+    <td nowrap>
+      {% include "staff/billing/action_bill_delay.html" %}
+      {% with bill.user as user %}
+        {% include "staff/billing/action_billing_flag.html" %}
+      {% endwith %}
+      {% with bill.amount as amount %}
+        {% include "staff/billing/action_bill_paid.html" %}
+      {% endwith %}
+    </td>
+  </tr>
+{% endfor %}
+  <tr class='total-row'>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><strong>{{ bills|length }} bill{{ bills|pluralize }}:</strong></td>
+    <td>
+      <strong>$<span id='bills-total'>{{ total|floatformat:2|intcomma }}</span>
+      </strong>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>

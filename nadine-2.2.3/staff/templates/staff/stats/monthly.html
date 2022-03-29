@@ -1,0 +1,33 @@
+{% extends "staff/stats/base.html" %}
+
+{% block sub-title %}Stats | Monthly Members{% endblock %}
+
+{% block content %}
+
+<h4>Stats - Monthly members:</h4>
+
+<div class='titles'>
+	<strong>Total Monthly Members:</strong> {{ memberships.count }} &nbsp;&nbsp;
+	<strong>Total Monthly Income:</strong>  ${{ total_income }}
+</div>
+
+<div id="monthly-members">
+	<table border="1">
+      <tr>
+         <th class='sub-th'>Member</th>
+         <th class='sub-th'>Start Date</th>
+         <th class='sub-th'>Package</th>
+         <th class='sub-th'>Rate</th>
+      </tr>
+      {% for membership in memberships %}
+	      <tr class="{% cycle 'row-odd' 'row-even' %}">
+	         <td><a href="{{ membership.who_url }}">{{ membership.who }}</a></td>
+	         <td>{{ membership.start_date }}</td>
+	         <td>{{ membership.package_name }}</td>
+	         <td>${{ membership.monthly_rate }}</td>
+	      </tr>
+	   {% endfor %}
+
+	</table>
+</div>
+{% endblock %}

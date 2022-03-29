@@ -1,0 +1,13 @@
+<form id="#set_paid_{{ bill.id}}"
+      method="POST"
+      style="display:inline-block;"
+      action="{% url 'staff:billing:bill_paid' bill.id %}"
+      onSubmit="return confirm('Record Payment of ${{ bill.total }} for Bill {{ bill.id}} ({{ bill.user.get_full_name }})?');" >
+  {% csrf_token %}
+  {% if payment_date %}
+    <input type="hidden" name="payment_date" value="{{ payment_date}}"/>
+  {% endif %}
+  <input type="hidden" name="amount" value="{{ bill.total }}"/>
+  <input type="hidden" name="next" value="{{ request.get_full_path }}" >
+  <input type="submit" value="Record Payment"/>
+</form>

@@ -1,0 +1,127 @@
+  {% load static %}
+
+
+  <h3 class='header-font' style='text-align: center;'>
+    {% if organization %}
+      Edit Your Organization Logo:
+    {% else %}
+      Edit Your Profile Image:
+    {% endif %}
+  </h3>
+
+  <form id="profile_image_form"
+  {% if organization %}
+    action="{% url 'member:org:edit_photo' organization.id %}"
+  {% elif user %}
+    action="{% url 'member:profile:edit_photo' user.username %}"
+  {% endif %}
+    method="POST"
+    enctype="multipart/form-data">
+  {% if organization %}
+    <input type='hidden' name='organization' value='{{ organization.id }}' />
+  {% elif user %}
+    <input type='hidden' name='username' value='{{ user.username }}'  />
+  {% endif %}
+  {{ form.cropped_image_data }}
+
+   <div id="form-errors">
+    {{ form.photo.errors|safe }}
+    {% if organization %}
+      {{ form.organization.errors}}
+    {% elif user %}
+      {{ form.username.errors }}
+    {% endif %}
+   </div>
+
+   <div style='max-height: 800px;' id="img-cropper-wrapper">
+     {{ form.photo }}
+     <button class='btn rotate-btn'><img src="{% static 'img/rotate.png' %}" /></button>
+   </div>
+
+   <div style='max-height: 800px;' id="image-preview-wrapper">
+     {% if organization.photo %}
+      <img style='max-height: 350px;' class='user-img' id='image-preview' src="{{ organization.photo.url }}" />
+     {% elif user.profile.photo %}
+      <img style='max-height: 350px;' class='user-img' id="image-preview" src="{{ user.profile.photo.url }}">
+     {% else %}
+       <img style='max-height: 350px;' id="image-preview" src="{% static 'img/blank_person.png' %}">
+     {% endif %}
+   </div>
+   <table>
+     <tr class='btn-row'>
+       <td><button type='submit' class='btn pic-btn'>Save</button></td>
+       <td>
+
+       </td>
+       <td style='padding-top:3%;'>
+         <a class='modal-btn' id='cancel-event'>Cancel</a>
+       </td>
+     </tr>
+   </table>
+   {% csrf_token %}
+  </form>
+
+  <script>
+  (function() {
+   function showCropper() {
+     $("#image-preview").cropper({
+       aspectRatio: 1/1,
+       zoomable: false,
+       rotatable: true,
+       scalable: false,
+       guides: false,
+       dragCrop: false,
+     });
+   }
+
+   function showImage(input) {
+     if (input.files && input.files[0]) {
+       var reader = new FileReader();
+
+       reader.onload = function (e) {
+         $('#image-preview').fadeOut(300, function() {
+           $(this).attr('src',e.target.result);
+         }).fadeIn(400, showCropper);
+       }
+       reader.readAsDataURL(input.files[0]);
+     }
+   }
+
+   $('.pic-btn').attr('disabled', 'disabled');
+
+   $("#id_photo").change(function() {
+     $('.pic-btn').attr('disabled', false);
+     $("#image-preview").cropper('destroy');
+     if ($("#id_photo").val()) {
+       showImage(this);
+     }
+   });
+
+   $('.rotate-btn').click(function(e){
+     e.preventDefault();
+     $('#image-preview').cropper({
+       aspectRatio: 1/1,
+       zoomable: false,
+       rotatable: true,
+       scalable: false,
+       guides: false,
+       dragCrop: false,
+     })
+     $('#image-preview').cropper('rotate', 90);
+     $('.pic-btn').attr('disabled', false);
+    });
+
+   $("#profile_image_form").submit(function(){
+     var img = $("#image-preview").cropper('getCroppedCanvas').toDataURL('image/jpeg').match(/data:image\/(png|jpeg);base64,(.*)$/)[2]
+     // add the cropped image data to the form, then submit.
+     $("#id_cropped_image_data").val(img);
+
+   });
+
+
+   $('.modal-btn').on('click', function() {
+     $('#picModal').css('display', 'none');
+   });
+
+  })();
+  </script>

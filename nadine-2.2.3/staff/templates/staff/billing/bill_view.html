@@ -1,0 +1,259 @@
+{% extends "staff/billing/base.html" %}
+{% load list_tags %}
+
+{% block sub-title %}Bill {{ bill.id }} | {{ bill.user.get_full_name }}{% endblock %}
+
+{% block content %}
+
+<h4>Bill {{ bill.id }}: <a href="{% url 'staff:members:detail' bill.user.username %}">{{ bill.user.get_full_name }}</a></h4>
+
+<span>[
+  <a href="{% url 'staff:billing:user_bills' bill.user.username %}">user bills </a> |
+  <a href="{% url 'staff:billing:batch_logs' %}?bill_id={{ bill.id }}">batch logs</a> |
+  <a href="{{ bill.get_absolute_url }}">view receipt </a> |
+  <a href="{{ bill.get_admin_url }}">admin</a>
+]</span>
+
+
+<div style="float:right; margin-top: 2%;">
+  <form style="display:inline-block;" action="." method="POST" onSubmit="return confirm('Are you sure you want to recalculate this bill?'); return false;">
+    <input name="recalculate" type="submit" class='btn' value="Recalculate" >
+    {% csrf_token %}
+  </form>
+
+  {% if bill.is_open %}
+    <form style="display:inline-block;" action="." method="POST" onSubmit="return confirm('Are you sure you want to mark this bill as closed?'); return false;">
+      <input name="close_bill" type="submit" class='btn' value="Close Bill" >
+      {% csrf_token %}
+    </form>
+  {% endif %}
+</div>
+
+<h5>Detail</h5>
+
+<table class='bill-id-table'>
+  <tr>
+    <th>Due Date:</th>
+    <td class='quarter-td'>
+      {{ bill.due_date|date:"m/d/y"  }}
+      {% if not bill.is_paid and overdue %}
+        <span style='color:red;'>
+          ({{ overdue }} Days Past Due)
+        </span>
+      {% endif %}
+    </td>
+    </td>
+    {% if bill.closed_ts %}
+      <th>Closed:</th>
+      <td class='quarter-td'>{{ bill.closed_ts }}</td>
+    {% else %}
+      <th>Status:</th>
+      <td class='quarter-td'>Open</td>
+    {% endif %}
+  </tr>
+</table>
+
+<table class='bill-id-table'>
+  <tr>
+    <th nowrap>Period Start:</th>
+    <td>
+      {{ bill.period_start|date:"m/d/y" }}
+    </td>
+    <th nowrap>Period End:</th>
+    <td>
+      {{ bill.period_end|date:"m/d/y" }}
+    </td>
+  </tr>
+</table>
+
+<table class='bill-id-table bill-id-table-2'>
+  <tr>
+    <th>Amount:</th>
+    <td class='quarter-td'>${{ bill.total }}</td>
+    <th id='paid-th'>Paid:</th>
+    <td class='quarter-td'>${{ bill.total_paid }}</td>
+    {% if not bill.is_paid and bill.total_paid > 0 %}
+      <th>Owed:</th>
+      <td>${{ bill.total_owed }}</td>
+    {% endif %}
+  </tr>
+</table>
+
+{% if bill.comment %}
+  <table class='bill-id-table'>
+    <tr>
+      <th>Comment:</th>
+      <td>{{ bill.comment }}</td>
+    </tr>
+  </table>
+{% endif %}
+{% if bill.note %}
+  <table class='bill-id-table'>
+    <tr>
+      <th>Note:</th>
+      <td>{{ bill.note }}</td>
+    </tr>
+  </table>
+{% endif %}
+
+{% if resources %}
+  <h5>Resources</h5>
+{% endif %}
+<table class='bill-id-table'>
+  <tr>
+    {% if resources.desk  %}
+      <th nowrap>Desk:</th>
+      <td class='bill_resource_td'>{{ resources.desk }}</td>
+    {% endif %}
+    {% if resources.mail  %}
+      <th nowrap>Mail:</th>
+      <td class='bill_resource_td'>{{ resources.mail }}</td>
+    {% endif %}
+    {% if resources.key  %}
+      <th nowrap>Key:</th>
+      <td class='bill_resource_td'>{{ resources.key }}</td>
+    {% endif %}
+  </tr>
+</table>
+
+{% if resources.days  %}
+  <table class='bill-id-table'>
+    <tr>
+      <th nowrap>Coworking Days Used:</th>
+      <td class='bill_resource_td'>{{ resources.days.count }}</td>
+      {% if resources.days.billable != resources.days.count %}
+        <th>Billable:</th>
+        <td>{{ resources.days.billable }}</td>
+      {% endif %}
+      <th>Allowance:</th>
+      <td>{{ resources.days.allowance }}</td>
+      {% if resources.days.overage %}
+        <th>Overage</th>
+        <td>{{ resources.days.overage }}</td>
+      {% endif %}
+    </tr>
+  </table>
+{% endif %}
+
+{% if resources.rooms %}
+<table class='bill-id-table'>
+  <tr>
+    <th nowrap>Room Booking Hours Used:</th>
+    <td class='bill_resource_td'>{{ resources.rooms.count }}</td>
+    <th>Allowance:</th>
+    <td>{{ resources.rooms.allowance }}</td>
+    {% if resources.rooms.overage %}
+      <th>Overage</th>
+      <td>{{ resources.rooms.overage }}</td>
+    {% endif %}
+  </tr>
+</table>
+{% endif %}
+
+<h5>Line Items</h5>
+<table class='item-table'>
+  <tr class="row-even">
+    <th>Description</th>
+    <th>Amount</th>
+    <th></th>
+  </tr>
+  {% for line_item in line_items %}
+    <tr class='{% cycle "row-odd" "row-even"  %}'>
+      <td style='width:60%;'>{{ line_item.description }}</td>
+      <td style="text-align: right; width: 40%;">${{ line_item.amount|floatformat:2 }}</td>
+      <td>
+        {% if line_item.coworkingdaylineitem and line_item.coworkingdaylineitem.day.billable %}
+          <form action="." method="POST" onSubmit="return confirm('Are you sure you want to waive visit on {{ line_item.coworkingdaylineitem.day.visit_date }}?'); return false;">
+            <input type="hidden" name="waive_day" value="{{ line_item.coworkingdaylineitem.day.id }}"/>
+            <input type="submit" class='btn' style="line-height: 18px; height: 16px; padding: 0 1rem;" value="Waive" >
+            {% csrf_token %}
+          </form>
+        {% endif %}
+
+        <!-- {% if line_item.coworkingdaylineitem %}
+          <a href="{{ line_item.coworkingdaylineitem.day.get_admin_url }}">Edit</a>
+        {% endif %}
+        {% if line_item.eventlineitem %}
+          <a href="{{ line_item.eventlineitem.get_admin_url }}">Edit</a>
+        {% endif %} -->
+      </td>
+    </tr>
+  {% endfor %}
+  {% for rate, amount in bill.total_tax_applied_by_rate %}
+    <tr class='{% cycle "row-odd" "row-even"  %}'>
+      <td style='width:60%;'>{{ rate.name }}</td>
+      <td style="text-align: right; width: 40%;">${{ amount|floatformat:2 }}</td>
+      <td></td>
+    </tr>
+  {% endfor %}
+</table>
+
+
+<h5>Payments</h5>
+{% if bill.payment_set.all or not bill.is_paid %}
+  <table class="payment-table">
+    <tr>
+      <th class="left">Recorded</th>
+      <th>Note</th>
+      <th class="right">Amount</th>
+      <th>Method</th>
+      <th></th>
+    </tr>
+    {% for payment in bill.payment_set.all %}
+      <tr class='payment-tr' style='border-bottom: none;'>
+        <td style='border-bottom: none;'>
+          {{ payment.created_ts|date:"m/d/y" }}
+          {% if payment.created_by %}
+            by {{ payment.created_by }}
+          {% endif %}
+        </td>
+        <td style='border-bottom: none;'>{{ payment.note|default:'' }}</td>
+        <td style="text-align:right; border-bottom: none;">${{ payment.amount }}</td>
+        <td style="border-bottom: none;">{{ payment.method }}</td>
+        <td style='border-bottom: none;'>
+          <form action="." method="POST" onSubmit="return confirm('Are you sure you want to delete this payment of ${{ payment.amount }}?'); return false;">
+            <input type="hidden" name="delete_payment_id" value="{{ payment.id }}"/>
+            <input type="submit" class='btn' value="Delete Payment" >
+            {% csrf_token %}
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+
+    {% if not bill.is_paid %}
+      <form method='POST' action="{% url 'staff:billing:record_payment' %}">
+        {{ payment_form.bill_id }}
+        {{ payment_form.username }}
+        {% csrf_token %}
+        <tr class='payment-tr'>
+          <td>{{ payment_form.payment_date }}</td>
+          <td>{{ payment_form.note }}</td>
+          <td class='payment-amount'>{{ payment_form.amount }}</td>
+          <td class='payment-method'>{{ payment_form.method}}</td>
+          <td>
+            <input type="submit" class='btn' value="Record Payment"/>
+          </td>
+        </tr>
+      </form>
+    {% endif %}
+  {% else %}
+    <p style='margin-left: 2%;'>
+      No payments to show and no payments may be applied to this bill as the total owed is $0.
+    </p>
+  {% endif %}
+</table>
+
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  $(document).ready(function() {
+    $('.button-collapse').sideNav();
+    $('.collapsible').collapsible();
+
+    $('.datepicker').datepicker({
+      dateFormat: 'yy-mm-dd',
+    });
+  })
+</script>
+{% endblock %}
