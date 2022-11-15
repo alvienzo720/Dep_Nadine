@@ -74,5 +74,6 @@ tinycss2==1.0.2
 urllib3==1.25.8
 WeasyPrint==51
 webencodings==0.5.1
+gunicorn==20.1.0
 
 -e git+https://github.com/nadineproject/django-jsignature.git@4badfba5a49cebf8357332f5adbc47ccb9b27c03#egg=django_jsignature

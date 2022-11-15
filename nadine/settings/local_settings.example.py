@@ -18,9 +18,11 @@ ADMINS = [
 # Database Settings
 DATABASES['default'] = {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'nadinedb',
+    'NAME': 'railway',
     'USER': 'postgres',
-    'PASSWORD': 'password'
+    'PASSWORD': 'uUVDwZROCSNYSoJWK3El',
+    'HOST': 'containers-us-west-121.railway.app',
+    'PORT': '5453',
 }
 
 # Site Information
