@@ -1,1 +1,1 @@
-web: gunicorn SavingsManager.wsgi --log-file -
+web: gunicorn nadine.wsgi --log-file -
